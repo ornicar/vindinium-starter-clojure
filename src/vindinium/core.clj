@@ -39,17 +39,17 @@
     (let [next (request (:playUrl input) {:dir (bot input)})]
       (if (:finished (:game next)) (println "") (recur next)))))
 
-(defn training [turns]
-  (let [input (request (str server-url "/api/training") {:key server-key :turns turns})]
-    (println (str "Starting training game " + (:viewUrl input)))
+(defn training [secret-key turns]
+  (let [input (request (str server-url "/api/training") {:key secret-key :turns turns})]
+    (println (str "Starting training game " (:viewUrl input)))
     (step input)
-    (println (str "Finished training game " + (:viewUrl input)))))
+    (println (str "Finished training game " (:viewUrl input)))))
 
-(defn arena [games]
+(defn arena [secret-key games]
   (loop [it 1]
     (let [p #(println (str "[" it "/" games "] " %))
           _ (p "Waiting for pairing...")
-          input (request (str server-url "/api/arena") {:key server-key})]
+          input (request (str server-url "/api/arena") {:key secret-key})]
       (p (str "Starting arena game " (:viewUrl input)))
       (step input)
       (p (str "Finished arena game " (:viewUrl input)))
