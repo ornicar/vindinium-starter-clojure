@@ -5,10 +5,7 @@
 
 (require '[clj-http.client :as http])
 
-; (def server-url "http://vindinium.org")
-; (def server-key "mySecretKey")
-(def server-url "http://24hcodebot.local")
-(def server-key "f3b1fm3m")
+(def server-url "http://vindinium.org")
 
 (defn bot [input]
   "Implement this function to create your bot!"
@@ -60,11 +57,11 @@
 
 (def usage
   "Usage:
-   training <number-of-turns>
-   arena <number-of-games")
+   training <secret-key> <number-of-turns>
+   arena <secret-key> <number-of-games")
 
 (defn -main [& args]
   (match (vec args)
-         ["training", nb] (training nb)
-         ["arena", nb] (arena nb)
+         ["training", secret-key, nb] (training secret-key nb)
+         ["arena", secret-key, nb] (arena secret-key nb)
          :else (println usage)))
