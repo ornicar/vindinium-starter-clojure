@@ -7,7 +7,9 @@
                  [org.clojure/clojure "1.5.1"]
                  [clj-http "0.7.8"]
                  [cheshire "5.3.1"]
-                 [slingshot "0.10.3"]]
+                 [slingshot "0.10.3"]
+                 [org.clojure/core.match "0.2.1"]
+                 ]
   :main ^:skip-aot vindinium.core
   :target-path "target/%s"
   :profiles {:uberjar {:aot :all}})
