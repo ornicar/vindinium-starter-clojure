@@ -29,7 +29,7 @@
   "makes a POST request and returns a parsed input"
   (try+
     (parse-input (:body (http/post url {:form-params params :as :json})))
-    (catch [] {:keys [status body]}
+    (catch map? {:keys [status body]}
       (println (str "[" status "] " body))
       (throw+))))
 
