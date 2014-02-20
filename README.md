@@ -11,10 +11,10 @@ $ lein repl
 > (require 'vindinium.core :reload)
 
 > ; run a training game with 80 turns
-> (vindinium.core/-main secretkey "training" 80)
+> (vindinium.core/-main "training" secretkey 80)
 
 > ; run 50 arena games
-> (vindinium.core/-main secretkey "arena" 50)
+> (vindinium.core/-main "arena" secretkey 50)
 ```
 
 ## Implementation
