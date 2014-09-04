@@ -12,6 +12,9 @@
   ; (prn input)
   (first (shuffle ["north", "south", "east", "west", "stay"])))
 
+(defn at [[x y] tiles size]
+ (tiles (+ (* y size) x)))
+
 ; Because the (y,x) position of the server is inversed. We fix it to (x,y).
 (defn fix-pos [{:keys [x y]}] [y x])
 
@@ -20,10 +23,11 @@
       (update-in [:pos] fix-pos)
       (update-in [:spawnPos] fix-pos)))
 
-(defn fix-input [input]
+(defn improve-input [input]
   (-> input
       (update-in [:hero] fix-hero)
-      (update-in [:game :heroes] #(map fix-hero %))))
+      (update-in [:game :heroes] #(map fix-hero %))
+      (update-in [:game :board :tiles] vec)))
 
 (defn parse-tile [tile]
   (match (vec tile)
@@ -44,7 +48,7 @@
     (-> (http/post url {:form-params params :as :json})
         :body
         parse-input
-        fix-input)
+        improve-input)
     (catch map? {:keys [status body]}
       (println (str "[" status "] " body))
       (throw+))))
