@@ -12,6 +12,19 @@
   ; (prn input)
   (first (shuffle ["north", "south", "east", "west", "stay"])))
 
+; Because the (y,x) position of the server is inversed. We fix it to (x,y).
+(defn fix-pos [{:keys [x y]}] [y x])
+
+(defn fix-hero [hero]
+  (-> hero
+      (update-in [:pos] fix-pos)
+      (update-in [:spawnPos] fix-pos)))
+
+(defn fix-input [input]
+  (-> input
+      (update-in [:hero] fix-hero)
+      (update-in [:game :heroes] #(map fix-hero %))))
+
 (defn parse-tile [tile]
   (match (vec tile)
          [\space \space] {:tile :air}
@@ -28,10 +41,14 @@
 (defn request [url, params]
   "makes a POST request and returns a parsed input"
   (try+
-    (parse-input (:body (http/post url {:form-params params :as :json})))
+    (-> (http/post url {:form-params params :as :json})
+        :body
+        parse-input
+        fix-input)
     (catch map? {:keys [status body]}
       (println (str "[" status "] " body))
       (throw+))))
+
 
 (defn step [from]
   (loop [input from]
