@@ -8,8 +8,13 @@
                  [clj-http "0.7.8"]
                  [cheshire "5.3.1"]
                  [slingshot "0.10.3"]
+                 [org.clojure/tools.logging "0.3.1"]
                  [org.clojure/core.match "0.2.1"]
                  ]
-  :main ^:skip-aot vindinium.core
+  :aot [vindinium.core]
   :target-path "target/%s"
+  :plugins [[lein-checkall "0.1.1"]
+            [lein-localrepo "0.5.3"]
+            [lein-marginalia "0.8.0"]]
+
   :profiles {:uberjar {:aot :all}})
