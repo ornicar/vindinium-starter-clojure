@@ -11,53 +11,54 @@
   (:import (java.awt Desktop))
   (:import (java.net URI)))
 
-(defn- at [[x y] tiles size]
+(defn- at
   "Given an sequence of tiles `tiles` representing a grid of height and width
   `size`, returns the tile in position `[x y]`"
+  [[x y] tiles size]
   (let [out (tiles (+ (* y size) x))] out))
 
+;; A record representing a hero.
+;;
+;; - `:id` -  the hero's id as a string.
+;; - `:name` - the hero's name as a string.
+;; - `:elo` - the elo of the hero - an integral value or nil.
+;; - `:pos` - a vector of two members representing the hero's current
+;; position.
+;; - `:life` - how many life points the hero has as an integral value.
+;; - `:gold` - how much gold the hero has as an integral value.
+;; - `:mine-count` - how many mines the hero has
+;; - `:spawn-pos` - a vector of two members representing the spawn
+;; position of the hero.
+;; - `:crashed` - a boolean representing whether the hero has crashed or
+;; not.
 (defrecord Hero
-  ^{:doc "A record representing a hero.
-
-         -`:id` -  the hero's id as a string.
-         -`:name` - the hero's name as a string.
-         -`:elo` - the elo of the hero - an integral value or nil.
-         -`:pos` - a vector of two members representing the hero's current
-         position.
-         -`:life` - how many life points the hero has as an integral value.
-         -`:gold` - how much gold the hero has as an integral value.
-         -`:mine-count` - how many mines the hero has
-         -`:spawn-pos` - a vector of two members representing the spawn
-         position of the hero.
-         -`:crashed` - a boolean representing whether the hero has crashed or
-         not.`"}
   [id name elo pos life gold mine-count spawn-pos crashed])
 
+;;  A record representing the state of the game.
+;;    
+;;  - `:dimensions` - a vector of two members representing the dimensions
+;;  of the board.
+;;  - `:my-hero` - a `Hero` record representing your hero.
+;;  - `:heroes` - a sequence of `Hero` records representing all the heroes.
+;;  - `:current-turn` - an integral value representing the number of the
+;;  current turn.
+;;  - `:max-turns` - an integral value representing the total number of
+;;  turns in this game.
+;;  - `:finished` - a boolean value indicating whether or not the game is
+;;  over.
+;;  - `:tiles` - a vector of vectors of objects representing tiles.
 (defrecord GameState
-  ^{:doc "A record representing the state of the game.
-      
-         -`:dimensions` - a vector of two members representing the dimensions
-         of the board.
-         -`:my-hero` - a `Hero` record representing your hero.
-         -`:heroes` - a sequence of `Hero` records representing all the heroes.
-         -`:current-turn` - an integral value representing the number of the
-         current turn.
-         -`:max-turns` - an integral value representing the total number of
-         turns in this game.
-         -`:finished` - a boolean value indicating whether or not the game is
-         over.
-         -`:tiles` - a vector of vectors of objects representing tiles."}
   [dimensions my-hero heroes current-turn max-turns finished tiles])
 
+;; A record representing a board tile.
+;;
+;; - `:tile` - the tile type. Can be one of `:wall`, `:air`, `:hero`,
+;; `:mine`, `:tavern`
+;; - `:of` - if the tile represents an owned mine, the id of
+;; the hero owning the mine - otherwise `nil`.
+;; - `:id` - if the tile represents a hero, the id of the hero
+;; owning the mine - otherwise `nil`.
 (defrecord Tile
-  ^{:doc "A record representing a board tile.
-
-         -`:tile` - the tile type. Can be one of `:wall`, `:air`, `:hero`,
-         `:mine`, `:tavern`
-         -`:of` - if the tile represents an owned mine, the id of
-         the hero owning the mine - otherwise `nil`.
-         -`:id` - if the tile represents a hero, the id of the hero
-         owning the mine - otherwise `nil`."}
   [tile of id])
 
 (defn- hero-map-to-record [hero]
@@ -146,22 +147,22 @@
                         {:dir (bot (game-state-map-to-record input))})]
       (when-not (:finished (:game next)) (recur next)))))
 
+;; This record represents configuration of a vindinium game to
+;;   be read from an edn file.
+;;
+;;  - `:mode` is a keyword - one of `:training` or `:arena`.
+;;  - `:secret-key` is the secret key of the vindinium server
+;;  as a string.
+;;  - `:turns` is the number of turns to run, which
+;;  will be ignored in arena mode.
+;;  - `:server-url` is where the vindinium server is.
+;;  - `:bot` is a symbol representing a bot function that takes
+;;  a GameState record and returns a string.
+;;  This function must be resolvable at the point of running
+;;  the game from the config.
+;;  representing the direction in which to go, which will be one of
+;;    `north`, `east`, `south`, `west` or `stay`
 (defrecord Config
-  ^{:doc "This record represents configuration of a vindinium game to
-   be read from an edn file.
-
-  - `:mode` is a keyword - one of `:training` or `:arena`.
-  - `:secret-key` is the secret key of the vindinium server
-  as a string.
-  - `:turns` is the number of turns to run, which
-  will be ignored in arena mode.
-  - `:server-url` is where the vindinium server is.
-  - `:bot` is a symbol representing a bot function that takes
-  a GameState record and returns a string.
-  This function must be resolvable at the point of running
-  the game from the config.
-  representing the direction in which to go, which will be one of
-    `north`, `east`, `south`, `west` or `stay`"}
   [mode secret-key turns server-url bot])
 
 (defn training
