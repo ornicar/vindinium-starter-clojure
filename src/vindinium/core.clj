@@ -83,6 +83,6 @@
 
 (defn -main [& args]
   (match (vec args)
-         ["training", secret-key, nb] (training secret-key nb)
-         ["arena", secret-key, nb] (arena secret-key nb)
+         ["training", secret-key, nb] (training secret-key (Integer/parseInt nb))
+         ["arena", secret-key, nb] (arena secret-key (Integer/parseInt nb))
          :else (println usage)))
