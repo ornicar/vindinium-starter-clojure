@@ -35,7 +35,7 @@
   [id name elo pos life gold mine-count spawn-pos crashed])
 
 ;;  A record representing the state of the game.
-;;    
+;;
 ;;  - `:dimensions` - a vector of two members representing the dimensions
 ;;  of the board.
 ;;  - `:my-hero` - a `Hero` record representing your hero.
@@ -62,35 +62,47 @@
   [tile of id])
 
 (defn- hero-map-to-record [hero]
-  (->Hero (:id hero) (:name hero) (:elo hero) (:pos hero) (:life hero)
-          (:gold hero) (:spawnPos hero) (:mineCount hero)
+  (->Hero (:id hero)
+          (:name hero)
+          (:elo hero)
+          (:pos hero)
+          (:life hero)
+          (:gold hero)
+          (:spawnPos hero)
+          (:mineCount hero)
           (:crashed hero)))
 
 (defn- tile-map-to-record [tile]
-  (->Tile (:tile tile) (:of tile) (:id tile)))
+  (->Tile (:tile tile)
+          (:of tile)
+          (:id tile)))
+
+(defn- create-coords [game-state size coords]
+  (map
+    (fn [x]
+      (map
+        (fn [y]
+          (tile-map-to-record
+            (at [x y]
+                (-> game-state
+                    :game
+                    :board
+                    :tiles)
+                size))) coords)) coords))
 
 (defn- game-state-map-to-record [game-state]
-  (let [size (-> game-state :game :board :size)
-        out (->GameState [size size]
-                         (-> game-state :hero hero-map-to-record)
-                         (map hero-map-to-record (-> game-state :game :heroes))
-                         (-> game-state :game :turn)
-                         (-> game-state :game :maxTurns)
-                         (-> game-state :game :board :finished)
-                         (and size (let [to-vector (partial into [])
-                                         coords (-> size range to-vector)] (map
-                                                      (fn [x]
-                                                        (map
-                                                          (fn [y]
-                                                            (tile-map-to-record
-                                                              (at [x y]
-                                                                (-> game-state
-                                                                    :game
-                                                                    :board
-                                                                    :tiles)
-                                                                  size)))
-                                                        coords)) coords))))]
-    out))
+  (let [size (-> game-state :game :board :size)]
+    (->GameState [size size]
+                 (-> game-state :hero hero-map-to-record)
+                 (map hero-map-to-record (-> game-state :game :heroes))
+                 (-> game-state :game :turn)
+                 (-> game-state :game :maxTurns)
+                 (-> game-state :game :board :finished)
+                 (and size (-> size
+                               range
+                               (into [])
+                               (create-coords game-state size))))))
+
 
 (defn random-bot
   "This function contains a stub implementation
@@ -98,7 +110,7 @@
   chooses a random direction in which to go."
   [input]
   (do (log/info input)
-      (first (shuffle ["north", "south", "east", "west", "stay"]))))
+      (->> ["north" "south" "east" "west" "stay"] shuffle first)))
 
 ; Because the (y,x) position of the server is inversed. We fix it to (x,y).
 (defn- fix-pos [{:keys [x y]}] [y x])
@@ -129,7 +141,7 @@
 
 (defn- request
   "makes a POST request and returns a parsed input"
-  [url, params]
+  [url params]
   (try+
     (-> (http/post url {:form-params params :as :json})
         :body
@@ -153,7 +165,7 @@
 ;;  - `:mode` is a keyword - one of `:training` or `:arena`.
 ;;  - `:secret-key` is the secret key of the vindinium server
 ;;  as a string.
-;;  - `:turns` is the number of turns to run, which
+;;  - `:turns` is the number of turns to run which
 ;;  will be ignored in arena mode.
 ;;  - `:server-url` is where the vindinium server is.
 ;;  - `:bot` is a symbol representing a bot function that takes
