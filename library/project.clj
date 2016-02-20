@@ -4,12 +4,12 @@
   :license {:name "MIT"
             :url "http://opensource.org/licenses/MIT"}
   :dependencies [
-                 [org.clojure/clojure "1.5.1"]
-                 [clj-http "0.7.8"]
-                 [cheshire "5.3.1"]
-                 [slingshot "0.10.3"]
+                 [org.clojure/clojure "1.7.0"]
+                 [clj-http "2.0.0"]
+                 [cheshire "5.5.0"]
+                 [slingshot "0.12.2"]
                  [org.clojure/tools.logging "0.3.1"]
-                 [org.clojure/core.match "0.2.1"]
+                 [org.clojure/core.match "0.2.2"]
                  ]
   :aot [vindinium.core]
   :target-path "target/%s"
