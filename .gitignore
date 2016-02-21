@@ -1,9 +1,12 @@
-/target
+library/docs/*
+*/target
+example/vindinium.log
+*.orig
 /classes
 /checkouts
 pom.xml
 pom.xml.asc
 *.jar
 *.class
-/.lein-*
+*/.lein-*
 /.nrepl-port

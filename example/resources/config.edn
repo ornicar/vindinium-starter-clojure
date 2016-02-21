@@ -1,0 +1,7 @@
+#vindinium.core.Config {
+  :mode :training
+  :bot vindinium.core/random-bot
+  :server-url "http://vindinium.org"
+  :secret-key "qtkplamj"
+  :turns 5
+}
